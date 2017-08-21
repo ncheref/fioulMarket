@@ -107,14 +107,13 @@ class VenteService {
 	 * @return array of Vente
 	 */
 	public function getVentes ($id_code_postal , $dateMin , $dateMax) {
-		return $this->em->getRepository('AppBundle:Vente')->getPricesBetweenTwoDates($id_code_postal , $dateMin , $dateMax);
+		return $this->em->getRepository('AppBundle:Vente')->getVentesBetweenTwoDates($id_code_postal , $dateMin , $dateMax);
 	}
 	
 	
 	// Pour mes tests (faire une boucle pour trouver un $batchSize proche de l'optimum; vider la table vente à chaque tour de boucle) 
 	public function supp () {
-		$q = $this->em->createQuery('delete from AppBundle:Vente v');
-		$q->execute();
+		return $this->em->getRepository('AppBundle:Vente')->supp();
 	}
 	
 }

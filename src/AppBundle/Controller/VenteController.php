@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use AppBundle\Util\Util;
 use Symfony\Component\Asset\Exception\InvalidArgumentException;
+use AppBundle\Services\VenteService;
 
 /**
  * Vente controller.
@@ -43,9 +44,9 @@ class VenteController extends Controller
 			throw new InvalidArgumentException('Format de date incorrect. Format attendu : AAAA-MM-JJ');
 		}
 
-		/* @var $serviceConvertCSVToArray ConvertCSVToArray */
-		$serviceConvertCSVToArray = $this->get('vente_service');  
-		$ventes = $serviceConvertCSVToArray->getVentes($id_code_postal, $dateMin, $dateMax);
+		/* @var $venteService VenteService */ 
+		$venteService = $this->get('vente_service');  
+		$ventes = $venteService->getVentes($id_code_postal, $dateMin, $dateMax);
 
 		return $ventes;
 	}

@@ -19,7 +19,7 @@ class VenteRepository extends \Doctrine\ORM\EntityRepository
 	 * @param date $dateMax
 	 * @return array
 	 */
-	public function getPricesBetweenTwoDates ($code_postal_id, $dateMin, $dateMax)
+	public function getVentesBetweenTwoDates ($code_postal_id, $dateMin, $dateMax)
 	{
 		$qb = $this
 					->createQueryBuilder('vente')
@@ -31,5 +31,12 @@ class VenteRepository extends \Doctrine\ORM\EntityRepository
 					->setParameter('DATE_MAX', $dateMax);
 		
 		return $qb->getQuery()->getResult();
+	}
+	
+	
+	// Pour mes tests
+	public function supp () {
+		$q = $this->em->createQuery('delete from AppBundle:Vente v');
+		$q->execute();
 	}
 }

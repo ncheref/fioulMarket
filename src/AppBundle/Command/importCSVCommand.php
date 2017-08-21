@@ -38,11 +38,11 @@ class importCSVCommand extends ContainerAwareCommand {
 		
 		$debut = microtime(true);
 		
-		/* @var $serviceConvertCSVToArray ConvertCSVToArray */ 
-		$serviceConvertCSVToArray = $this->getContainer()->get('vente_service');
+		/* @var $venteService VenteService */ 
+		$venteService = $this->getContainer()->get('vente_service');
 		
 		try{
-			$serviceConvertCSVToArray->upload($filename,',',$io);
+			$venteService->upload($filename,',',$io);
 
 		} catch(Exception $e) {
 			$io->error($e->getMessage());
