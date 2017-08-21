@@ -1,0 +1,7 @@
+app:
+    resource: '@AppBundle/Controller/DefaultController.php'
+    type: annotation
+
+ventes:
+    type:     rest
+    resource: AppBundle\Controller\VenteController
