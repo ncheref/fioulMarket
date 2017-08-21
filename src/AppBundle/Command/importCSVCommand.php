@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use AppBundle\Services\ConvertCSVToArray;
+use AppBundle\Services\VenteService;
 
 
 class importCSVCommand extends ContainerAwareCommand { 
@@ -28,12 +28,12 @@ class importCSVCommand extends ContainerAwareCommand {
 	protected function execute(InputInterface $input, OutputInterface $output) { 
 		$io = new SymfonyStyle($input, $output); 
 		
-		// Récupérer le filename passé en argument 
+		// RÃ©cupÃ©rer le filename passÃ© en argument 
 		$filename = $input->getArgument('pathToFile');
 		
 		$io->title('Chargement du fichier "' . $filename .'" en cours ...');
 		
-		// définir  une progress bar avec le nombre d'étapes en paramètre
+		// dÃ©finir  une progress bar avec le nombre d'Ã©tapes en paramÃ¨tre
 		$io->progressStart(200000);
 		
 		$debut = microtime(true);
