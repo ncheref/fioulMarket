@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use AppBundle\Services\ConvertCSVToArray;
+use AppBundle\Services\VenteService;
 
 
 class importCSVCommand extends ContainerAwareCommand { 
@@ -38,7 +38,7 @@ class importCSVCommand extends ContainerAwareCommand {
 		
 		$debut = microtime(true);
 		
-		/* @var $venteService VenteService */ 
+		/* @var $venteService VenteService */  
 		$venteService = $this->getContainer()->get('vente_service');
 		
 		try{
