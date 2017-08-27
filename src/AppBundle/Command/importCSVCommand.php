@@ -28,17 +28,11 @@ class importCSVCommand extends ContainerAwareCommand {
 	protected function execute(InputInterface $input, OutputInterface $output) { 
 		$io = new SymfonyStyle($input, $output); 
 		
-		// Récupérer le filename passé en argument 
+		// R�cup�rer le fichier pass� en argument
 		$filename = $input->getArgument('pathToFile');
 		
 		$io->title('Chargement du fichier "' . $filename .'" en cours ...');
 		
-<<<<<<< HEAD
-=======
-		// définir  une progress bar avec le nombre d'étapes en paramètre
-		$io->progressStart(200000);
-		
->>>>>>> 25b690f3c0c18c026b257e29c1853e19b0615f66
 		$debut = microtime(true);
 		
 		/* @var $venteService VenteService */  
