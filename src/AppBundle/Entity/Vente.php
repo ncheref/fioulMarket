@@ -43,6 +43,13 @@ class Vente
     private $date;
 
 
+    function __construct($postalCodeId, $amount, $date ) {
+    	$this->postalCodeId = $postalCodeId;
+    	$this->amount = $amount;
+    	$this->date = $date;
+    }
+    
+    
     /**
      * Get id
      *

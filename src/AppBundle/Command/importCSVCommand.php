@@ -33,16 +33,13 @@ class importCSVCommand extends ContainerAwareCommand {
 		
 		$io->title('Chargement du fichier "' . $filename .'" en cours ...');
 		
-		// définir  une progress bar avec le nombre d'étapes en paramètre
-		$io->progressStart(200000);
-		
 		$debut = microtime(true);
 		
 		/* @var $venteService VenteService */  
 		$venteService = $this->getContainer()->get('vente_service');
 		
 		try{
-			$venteService->upload($filename,',',$io);
+			$venteService->uploadCsvToBd($filename,',');
 
 		} catch(Exception $e) {
 			$io->error($e->getMessage());

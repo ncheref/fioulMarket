@@ -1,2 +1,0 @@
-[2017-08-21 23:34:12] request.INFO: Matched route "test". {"route":"test","route_parameters":{"_controller":"AppBundle\\Controller\\DefaultController::testAction","_route":"test"},"request_uri":"http://localhost:8081/fioulMarket/web/app_dev.php/test","method":"GET"} []
-[2017-08-21 23:34:12] security.INFO: Populated the TokenStorage with an anonymous Token. [] []

@@ -2,12 +2,14 @@
 namespace tests\AppBundle\Services;
 
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use AppBundle\Services\VenteService;
 
-class VenteServiceTest extends WebTestCase{ 
+class VenteServiceTest extends \PHPUnit_Framework_TestCase{ 
 	
 	public function testGetVentes()
 	{
+		$venteService = new VenteService(self::$kernel->getContainer()->get('doctrine')->getManager());
+		assertEquals(1, 1);
 	}
 	
 }

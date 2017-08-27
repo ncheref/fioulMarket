@@ -5,7 +5,6 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use AppBundle\Entity\Vente;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class VenteService { 
 	
@@ -15,43 +14,59 @@ class VenteService {
 		$this->em = $em;
 	}
 	
+	
 	/**
-	 * Fonction qui charge les ventes contenues dans le fichier en paramètre en base
-	 * @author ncheref
-	 * @param string $filename : le chemin vers le fichier
-	 * @param string $charDelimiter : le délimiteur, qui est par défaut à ,
-	 * @throws NotFoundResourceException : si le fichier est introuvable
-	 * @throws \Exception : si les fichier est inaccessible
-	 * @throws \Symfony\Component\HttpFoundation\File\Exception\FileException : en cas d'erreur pendant la lecture
-	 * @return number 200 en cas de succès du chargement
+	 * Charger le fichier csv contenant des objets ventes en base
+	 * @param string $filename : chemin vers le fichier csv
+	 * @param string $charDelimiter : délimiteur du fichier csv
 	 */
-	public function upload($filename , $charDelimiter = ',' , SymfonyStyle $io = null) { 
+	public function uploadCsvToBd ($filename , $charDelimiter = ',') {
 		
+		// Tester l'accessibilité du fichier
+		$this->checkIfFileIsAccessible($filename);
+		
+		// Récupérer les ventes contenues dans le fichier
+		$ventes = $this->csvToArray($filename,$charDelimiter);
+		
+		// Charger les ventes en base
+		$this->save($ventes);
+	}
+	
+	/**
+	 * tester si un fichier existe et qu'il est accessible
+	 * @param string $filename
+	 * @throws NotFoundResourceException
+	 * @throws \Exception
+	 */
+	public function checkIfFileIsAccessible ($filename) {
 		//Ressource non trouvée
 		if (! file_exists($filename)){
 			throw new NotFoundResourceException($filename);
 		}
-		
+	
 		//Ressource inaccessible
 		if (! is_readable($filename)) {
 			throw new \Exception($filename . 'est inaccessible');
 		}
+	}
+
+	/**
+	 * Retourner un tableau de ventes alimentés depuis le fichier csv passé en paramètre
+	 * @param string $filename
+	 * @param string $charDelimiter
+	 * @throws FileException
+	 * @return \AppBundle\Entity\Vente[]
+	 */
+	public function csvToArray ($filename , $charDelimiter = ',') {
 		
-		$batchSize = 800;
-		$ligne = 1;
 		$header = Null;
+		$arrayFromCsv = [];
+		$firstLine = true;
 		
 		if (($handle = fopen($filename, 'r')) !== false) {
-			
 			try {
 				// On continue la lecture du fichier tant qu'il y a des lignes non vides
 				while (($row = fgetcsv($handle, null, $charDelimiter)) !== false) {
-					
-					// Convertir les données en UTF-8
-// 					$row = array_map("utf8_encode", $row);
-					
-					// Supression des espaces
-// 					$row = array_map("trim", $row);
 					
 					if(!$header) {
 						$header = $row;
@@ -59,43 +74,59 @@ class VenteService {
 						$row = array_combine($header, $row);
 					}
 					
-					
-					if ($ligne != 1) {
-						$vente = new Vente();
-						$vente->setPostalCodeId($row['postal_code_id']);
-						$vente->setAmount($row['amount']);
-						$vente->setDate(date_create_from_format('Y-m-d' , $row['date']));
-						$this->em->persist($vente);
+					if ($firstLine) {
+						$firstLine = false;
+						continue;
 					}
-					
-					// flush par lots
-					if (($ligne % $batchSize) == 0) {
-						// Mettre à jour la progress bar 
-						$io->progressAdvance($batchSize);
 						
-						$this->em->flush();
-						$this->em->clear();
-					}
-					
-					$ligne++;
-					
-					
+					// Pas de validation des données lues
+					$arrayFromCsv [] = $this->createVente($row['postal_code_id'], $row['amount'], date_create_from_format('Y-m-d' , $row['date']));
+			
 				}
-				
+			
 			} catch(\Exception $e){
 				throw new FileException($e->getMessage());
-				
+			
 			} finally {
 				fclose($handle);
+			}
+		
+		}
+		
+		return $arrayFromCsv;
+	}
+	
+	
+	/**
+	 * Créer un objet vente à partir des valeurs passées en paramètre
+	 * @param string $postal_code_id
+	 * @param string $amount
+	 * @param \DateTime $date
+	 * @return \AppBundle\Entity\Vente
+	 */
+	public function createVente ($postal_code_id, $amount, \DateTime $date) {
+		return new Vente($postal_code_id,$amount,$date);
+	}
+	
+	
+	/**
+	 * Insérer les ventes contenues dans le tableau en paramètre en base
+	 * @param array $ventes
+	 */
+	public function save ($ventes) {
+		$batchSize = 100;
+		$cpt = 1; 
+		
+		/* @var $vente Vente */ 
+		foreach ($ventes as $vente) {
+			$this->em->persist($vente);
+			
+			if ($cpt % $batchSize == 0) {
+				$this->em->flush();
 			}
 		}
 		
 		$this->em->flush();
-		$this->em->clear();
-		
-		$io->progressFinish();
-		
-		return 200; //succès 
 	}
 	
 	/**
